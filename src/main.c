@@ -1,3 +1,10 @@
+
+
+
+#define FIRMWARE_VERSION "1.0"
+
+
+
 #include <stdio.h>
 #include <stdint.h>
 
@@ -60,6 +67,7 @@ led_strip_t *strip;
 const char* long_name 		= "Krach vom Fach LED Tube";
 const char* short_name 		= "LED Tube";
 const char* serial_number 	= "6";
+const char* fw_version      = FIRMWARE_VERSION ;
 
 static const char	*TAG = "eth_example";
 
@@ -239,7 +247,7 @@ void tcp_task()
 			printf("connection established\n");
 			
 			memset(replyBuf, 0, BUFLEN);
-			n = sprintf(replyBuf, "%s %s\r\n\r\n", long_name, serial_number);
+			n = sprintf(replyBuf, "%s %s\r\nFW %s\r\n\r\n", long_name, serial_number, fw_version);
 			send(client_fd, replyBuf, n, 0);
 
 			n = get_state(replyBuf, BUFLEN);
