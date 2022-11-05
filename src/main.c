@@ -53,6 +53,7 @@
 #define TCP_PORT 1337
 
 #define MAX_UNIS 10
+
 #define MAX_LEDS 600
 
 uint_fast8_t        NUM_UNIS = 10;
