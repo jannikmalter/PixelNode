@@ -463,7 +463,7 @@ void app_main() {
     esp_netif_t *eth_netif = esp_netif_new(&cfg);
 	
     // Set default handlers to process TCP/IP stuffs
-    ESP_ERROR_CHECK(esp_eth_set_default_handlers(eth_netif));
+    //ESP_ERROR_CHECK(esp_eth_set_default_handlers(eth_netif));
     
 	// Register user defined event handers
     ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, IP_EVENT_ETH_GOT_IP, &got_ip_event_handler, NULL));
@@ -472,15 +472,17 @@ void app_main() {
     eth_phy_config_t phy_config = ETH_PHY_DEFAULT_CONFIG();
     phy_config.phy_addr = MY_ETH_PHY_ADDR;
     phy_config.reset_gpio_num = MY_ETH_PHY_RST_GPIO;
-    gpio_pad_select_gpio((gpio_num_t)PIN_PHY_POWER);
+    esp_rom_gpio_pad_select_gpio((gpio_num_t)PIN_PHY_POWER);
     gpio_set_direction((gpio_num_t)PIN_PHY_POWER,GPIO_MODE_OUTPUT);
     gpio_set_level((gpio_num_t)PIN_PHY_POWER, 1);
     vTaskDelay(pdMS_TO_TICKS(10));
+
+	eth_esp32_emac_config_t esp32_emac_config = ETH_ESP32_EMAC_DEFAULT_CONFIG();
 	
-    mac_config.smi_mdc_gpio_num = MY_ETH_MDC_GPIO;
-    mac_config.smi_mdio_gpio_num = MY_ETH_MDIO_GPIO;
-    esp_eth_mac_t *mac = esp_eth_mac_new_esp32(&mac_config);
-    esp_eth_phy_t *phy = esp_eth_phy_new_lan8720(&phy_config);
+    esp32_emac_config.smi_mdc_gpio_num = MY_ETH_MDC_GPIO;
+    esp32_emac_config.smi_mdio_gpio_num = MY_ETH_MDIO_GPIO;
+    esp_eth_mac_t *mac = esp_eth_mac_new_esp32(&esp32_emac_config, &mac_config);
+    esp_eth_phy_t *phy = esp_eth_phy_new_lan87xx(&phy_config);
 
     esp_eth_config_t config = ETH_DEFAULT_CONFIG(mac, phy);
     esp_eth_handle_t eth_handle = NULL;
